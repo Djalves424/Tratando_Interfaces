@@ -1,0 +1,36 @@
+package model.services;
+
+import model.entities.CarRental;
+import model.entities.Invoice;
+
+public class RentalService {
+
+	private Double pricePerHour;
+	private Double pricePerDay;
+
+	private TaxService taxService;
+
+	public RentalService(Double pricePerHour, Double pricePerDay, TaxService taxService) {
+		this.pricePerHour = pricePerHour;
+		this.pricePerDay = pricePerDay;
+		this.taxService = taxService;
+	}
+	
+	public void processIvoice(CarRental carRental) {
+		long t1 = carRental.getStart().getTime();
+		long t2 = carRental.getFinish().getTime();
+		
+		double basicPayment;
+		if (hours <= 12.0) {
+			basicPayment = pricePerHour * Math.ceil(t1);
+		}
+		else {
+			basicPayment = pricePerDay * Math.ceil(t1 / 24.0);
+			
+		}
+		
+		double tax = taxService.tax(basicPayment);
+		
+		carRental.setInvoice(new Invoice(basicPayment, tax));
+	}
+}
